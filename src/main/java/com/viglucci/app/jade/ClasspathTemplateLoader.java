@@ -14,7 +14,7 @@ public class ClasspathTemplateLoader implements TemplateLoader{
 
 	private static final String suffix = ".jade";
 	private String encoding = "UTF-8";
-	private String base = "templates/app/jade/";
+	private String base = "templates/jade/";
 
 	public ClasspathTemplateLoader() {}
 
@@ -25,7 +25,9 @@ public class ClasspathTemplateLoader implements TemplateLoader{
 	@Override
 	public Reader getReader(String path) throws IOException {
 		path = this.base + path;
-		if(!path.endsWith(this.suffix)) path = path + suffix;
+		if(!path.endsWith(this.suffix))
+			path = path + suffix;
+		System.out.println("ClasspathTemplateLoader loading resource: " + path);
 		return new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(path), getEncoding());
 	}
 

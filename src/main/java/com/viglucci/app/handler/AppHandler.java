@@ -22,21 +22,31 @@ public class AppHandler extends CefAppHandlerAdapter {
 	public void onRegisterCustomSchemes(CefSchemeRegistrar registrar) {
 		if (registrar.addCustomScheme(LocalSchemaHandler.scheme, true, false, false))
 			System.out.println("Added scheme " + LocalSchemaHandler.scheme + "://");
+		if (registrar.addCustomScheme(TemplateSchemaHandler.scheme, true, false, false))
+			System.out.println("Added scheme " + TemplateSchemaHandler.scheme + "://");
 	}
 
 	@Override
 	public void onContextInitialized() {
 		CefApp cefApp = CefApp.getInstance();
 		cefApp.registerSchemeHandlerFactory(LocalSchemaHandler.scheme, LocalSchemaHandler.domain, new SchemeHandlerFactory());
+		cefApp.registerSchemeHandlerFactory(TemplateSchemaHandler.scheme, TemplateSchemaHandler.domain, new SchemeHandlerFactory());
 	}
 
 	private class SchemeHandlerFactory implements CefSchemeHandlerFactory {
 
 		@Override
 		public CefResourceHandler create(CefBrowser browser, String schemeName, CefRequest request) {
-			if (schemeName.equals(LocalSchemaHandler.scheme))
-				return new LocalSchemaHandler();
-			return null;
+			SchemaHandler handler = null;
+			switch(schemeName) {
+				case LocalSchemaHandler.scheme:
+					handler = new LocalSchemaHandler();
+					break;
+				case TemplateSchemaHandler.scheme:
+					handler = new TemplateSchemaHandler();
+					break;
+			}
+			return handler;
 		}
 	}
 
